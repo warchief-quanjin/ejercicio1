@@ -1,6 +1,15 @@
 import React, { Component } from 'react';
+import '../App.css';
 
 class App extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            messages: []
+        }
+    }
+
     fixMessage = (message) => {
         let mNotDuplicated = ""
 
@@ -27,6 +36,55 @@ class App extends Component {
         element.click();
     }
 
+    checkDataValidity = (data) => {
+        let messages = [];
+        const integerRegex = /^[1-9]\d*$/
+        const messageCharsRegex = /[a-zA-Z0-9]$/
+
+        const controlValues = data[0].split(" ")
+
+        if (data.length !== 4)
+            messages.push("La cantidad de lineas en el input es invalida");
+
+        if (controlValues.length !== 3) {
+            messages.push(`La cantidad de valores de control deben ser 3 y se encontraron ${controlValues.length} valores`);
+        } else {
+            controlValues.forEach(controlValue => {
+                if (!integerRegex.exec(controlValue))
+                    messages.push(`El valor de control ${controlValue} no es un entero`);
+            });
+
+            const M1 = controlValues[0];
+            const M2 = controlValues[1];
+            const N = controlValues[2];
+
+            if (M1 < 2 || M1 > 50) {
+                messages.push(`El valor de M1 debe ser un numero entre 2 y 50`);
+            } else {
+                data[1].length.toString() !== M1 && messages.push(`La longitud de M1 es incorrecta`);
+            }
+
+            if (M2 < 2 || M2 > 50) {
+                messages.push(`El valor de M2 debe ser un numero entre 2 y 50`);
+            } else {
+                data[2].length.toString() !== M2 && messages.push(`La longitud de M2 es incorrecta`);
+            }
+
+            if (N < 3 || N > 5000) {
+                messages.push(`El valor de N debe ser un numero entre 3 y 5000`);
+            } else {
+                data[3].length.toString() !== N && messages.push(`La longitud de N es incorrecta`);
+            }
+
+            if (!messageCharsRegex.exec(data[3]))
+                messages.push(`El mensaje solo puede contener los caracteres a-z, A-Z o 0-9`);
+        }
+
+        this.setState({ messages });
+
+        return messages.length === 0;
+    }
+
     showFile = async (e) => {
         e.preventDefault()
         const reader = new FileReader()
@@ -34,9 +92,15 @@ class App extends Component {
         reader.onload = async (e) => {
             const text = (e.target.result)
             const data = text.split(/\r\n|\r|\n/)
-            const message = this.fixMessage(data[3])
 
-            this.createResponse(data, message)
+            const validData = this.checkDataValidity(data)
+
+            if (validData) {
+                const message = this.fixMessage(data[3])
+                this.createResponse(data, message)
+            }
+
+            document.getElementById("file-input").value = "";
         };
 
         if (e.target.files.length > 0)
@@ -44,9 +108,17 @@ class App extends Component {
     }
 
     render = () => {
+        const { messages } = this.state;
+
         return (
-            <div>
-                <input type="file" onChange={(e) => this.showFile(e)} />
+            <div className="App-body">
+                <label for="file-input" className="custom-file-input">
+                    Desencriptar mensaje
+                </label>
+                <input type="file" id="file-input" onChange={(e) => this.showFile(e)} />
+                {messages && messages.map((message, key) =>
+                    <span key={`message-${key}`} className="message">{message}</span>
+                )}
             </div>
         )
     }

@@ -1,12 +1,16 @@
-import './App.css';
+
 import Input from './components/Input'
+import './App.css';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <Input />
+        <h1>Prueba 1</h1>
       </header>
+      <body>
+        <Input />
+      </body>
     </div>
   );
 }

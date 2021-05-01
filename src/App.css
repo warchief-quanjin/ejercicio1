@@ -13,9 +13,39 @@
   }
 }
 
+input[type="file"] {
+  display: none;
+}
+
+.custom-file-input {
+  border: 1px solid #afafaf;
+  display: inline-block;
+  border-radius: 5px;
+  padding: 6px 12px;
+  color: white;
+  background-color: #2875bd;
+}
+
+.custom-file-input:hover {
+  cursor: pointer;
+  background-color: #153a5d;
+}
+
+.message {
+  margin-top: 10px;
+  color: red;
+}
+
+.App-body {
+  margin: 180px 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .App-header {
   background-color: #282c34;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
