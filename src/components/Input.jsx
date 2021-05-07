@@ -21,6 +21,17 @@ class App extends Component {
         return mNotDuplicated
     }
 
+    checkDuplicatedChar = (message) => {
+        let duplicated = false;
+
+        for (let i = 0; i < message.length; i++) {
+            if (message.charAt(i) === message.charAt(i + 1))
+                duplicated = true
+        }
+
+        return duplicated;
+    }
+
     createResponse = (data, message) => {
         const res1 = message.includes(data[1]) ? "SI" : "NO"
         const res2 = message.includes(data[2]) ? "SI" : "NO"
@@ -39,9 +50,11 @@ class App extends Component {
     checkDataValidity = (data) => {
         let messages = [];
         const integerRegex = /^[1-9]\d*$/
-        const messageCharsRegex = /[a-zA-Z0-9]$/
+        const messageCharsRegex = /^[a-zA-Z0-9]+$/
 
         const controlValues = data[0].split(" ")
+
+        const message = this.fixMessage(data[3])
 
         if (data.length !== 4)
             messages.push("La cantidad de lineas en el input es invalida");
@@ -76,8 +89,17 @@ class App extends Component {
                 data[3].length.toString() !== N && messages.push(`La longitud de N es incorrecta`);
             }
 
+            if (!messageCharsRegex.exec(data[1]) || !messageCharsRegex.exec(data[2]))
+                messages.push(`Las instrucciones solo pueden contener los caracteres a-z, A-Z o 0-9`);
+
             if (!messageCharsRegex.exec(data[3]))
                 messages.push(`El mensaje solo puede contener los caracteres a-z, A-Z o 0-9`);
+
+            if (message.includes(data[1]) && message.includes(data[2]))
+                messages.push(`El mensaje solo puede contener una instruccion`);
+
+            if (this.checkDuplicatedChar(data[1]) || this.checkDuplicatedChar(data[2]))
+                messages.push(`Las instrucciones no pueden tener caracteres duplicados`);
         }
 
         this.setState({ messages });
